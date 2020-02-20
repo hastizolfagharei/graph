@@ -37,7 +37,6 @@ class Graph:
         if len(self.n_dict[node].degrees) == 0 :
             self.delete_node(node)
 
-
     def add_link(self, input_link):
         # add link to dict
         self.l_dict[(input_link.in_node_id, input_link.out_node_id)] = input_link
@@ -46,5 +45,17 @@ class Graph:
         self.n_dict[input_link.in_node_id].degrees.append(input_link.out_node_id)
         self.n_dict[input_link.out_node_id].degrees.append(input_link.in_node_id)
 
-    def delete_link(self):
-        pass
+    def delete_link(self, ri_id, ro_id):
+        # delete link from link_dictionary
+        for key in self.l_dict:
+            if key[0] == ri_id:
+                if key[1] == ro_id:
+                    del self.l_dict[key]
+            elif key[0] == ro_id:
+                if key[1] == ri_id:
+                    del self.l_dict[key]
+
+        # check if in_node_id, out_node_id become single or not
+        self.check_node(ri_id)
+        self.check_node(ro_id)
+
