@@ -40,13 +40,14 @@ def main():
     g.add_link(l8)
     g.add_link(l9)
 
-    print(n0.degrees)
+    g.delete_node(n0)
+
+    print(g.n_dict[0].degrees)
     print(n1.location)
     print(n2.id)
     print(n3.id)
-    print(n4.degrees)
+    # print(g.n_dict[4].degrees)
 
-    g.delete_link(l8)
 
     # print(g.node_counter)
     # print(g.n_dict)

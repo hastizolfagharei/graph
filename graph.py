@@ -17,28 +17,33 @@ class Graph:
 
     def delete_node(self, rem_node):
         # delete node from node dictionary
-        node_info = self.n_dict.pop(rem_node)
+        node_info = self.n_dict.pop(rem_node.id)
 
-        # sorting ids respectively
-        for key in self.n_dict:
-            if key > rem_node:
-                self.n_dict[key - 1] = self.n_dict.pop(key)
-                self.n_dict[key - 1].id = key - 1
+        # check if connected nodes are single or not
+        key_list = []
+        for degree in node_info.degrees:
+            len_deg = len(self.n_dict[degree].degrees)
+            if len_deg == 0 :
+                key_list.append(self.n_dict[degree])
+
+        self.delete_isolated_nodes(key_list)
 
         # delete links which are connected to this node
-        degree = len(node_info.degree)
         for key in self.l_dict:
             if key[0] == rem_node or key[1] == rem_node:
                 del self.l_dict[key]
 
-        # check if connected nodes are single or not
-        for degree in node_info.degrees:
-            self.check_node(degree)
+        # sorting ids respectively
+        ex_dict = {}
+        for key in self.n_dict.copy():
+            if key > rem_node.id:
+                ex_dict[key] = self.n_dict.pop(key)
+        for key in ex_dict:
+            self.n_dict[key - 1] = ex_dict[key]
 
-    # this method will check if a node is single or not
-    def check_node(self, node):
-        if len(self.n_dict[node].degrees) == 0:
-            self.delete_node(node)
+    def delete_isolated_nodes(self, key_list):
+        for key in key_list:
+            self.n_dict[key].pop()
 
     def add_link(self, input_link):
         # add link to dict
@@ -54,12 +59,16 @@ class Graph:
         self.n_dict[link.out_node_id].degrees.remove(link.in_node_id)
 
         # check if in_node_id, out_node_id become single or not
-        self.check_node(link.in_node_id)
-        self.check_node(link.out_node_id)
+        if len(self.n_dict[link.in_node_id].degrees) == 0:
+            self.n_dict.pop(link.in_node_id)
+        if len(self.n_dict[link.out_node_id].degrees) == 0:
+            self.n_dict.pop(link.out_node_id)
 
         # delete link from link_dictionary
+        l = None
         for key in self.l_dict:
-            if (key[0] == link.in_node_id and key[1] == link.out_node_id) or \
-                    (key[0] == link.out_node_id and key[1] == link.in_node_id):
-                del self.l_dict[key]
+            if (key[0] == link.in_node_id and key[1] == link.out_node_id) or (key[0] == link.out_node_id and key[1] == link.in_node_id) :
+                l = key
+        del self.l_dict[l]
+
 
