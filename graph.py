@@ -10,11 +10,32 @@ class Graph:
 
     def add_node(self, input_node):
         self.n_dict[self.node_counter] = input_node
+        self.n_dict[self.node_counter].id = self.node_counter
         self.node_counter += 1
 
     def delete_node(self, rem_node):
-        pass
+        # delete node from node dictionary
+        node_info = self.n_dict.pop(rem_node)
 
+        # sorting ids respectively
+        for key in self.n_dict:
+            if key > rem_node:
+                self.n_dict[key-1] = self.n_dict.pop(key)
+
+        # delete links which are connected to this node
+        degree = len(node_info.degree)
+        for key in self.l_dict:
+            if key[0] == rem_node or key[1] == rem_node:
+                del self.l_dict[key]
+
+        # check if connected nodes are single or not
+        for degree in node_info.degrees:
+            self.check_node(degree)
+
+    # this function will check if a node is single or not
+    def check_node(self, node):
+        if len(self.n_dict[node].degrees) == 0 :
+            self.delete_node(node)
 
 
     def add_link(self, input_link):
